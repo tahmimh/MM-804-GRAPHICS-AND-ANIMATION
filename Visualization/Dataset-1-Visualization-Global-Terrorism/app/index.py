@@ -4,6 +4,8 @@ import dash_html_components as html
 from dash.dependencies import Input, Output
 import plotly.graph_objs as go
 import pandas as pd
+from dash import Dash, page_container, dcc, clientside_callback, ClientsideFunction, Output, Input
+
 
 terr2 = pd.read_csv('https://raw.githubusercontent.com/tahmimh/MM-804-GRAPHICS-AND-ANIMATION/main/Dataset/modified_globalterrorismdatabase.csv')
 
@@ -12,7 +14,15 @@ list_locations = location1.set_index('country_txt')[['latitude', 'longitude']].T
 
 region = terr2['region_txt'].unique()
 
-app = dash.Dash(__name__, )
+class MainApplication:
+    def __init__(self):
+        self.__app = Dash(
+            __name__,
+            update_title="Loading...",
+            use_pages=True,
+        )
+
+#app = dash.Dash(__name__, )
 app.layout = html.Div([
 
     html.Div([
@@ -1127,10 +1137,12 @@ def display_content(w_countries, w_countries1, select_years):
     }
 
 
+#if __name__ == '__main__':
+#    app.run_server(debug = True)
+    @property
+    def app(self):
+        return self.__app
 
 
-
-
-
-if __name__ == '__main__':
-    app.run_server(debug = True)
+Application = MainApplication()
+app = Application.app.server
